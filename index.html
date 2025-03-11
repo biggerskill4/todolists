@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do Lists</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="shortcut icon" href="./Images/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+
+    <header>
+        <div class="row flex">
+            <div class="site_title">
+                <h3>To Do Lists</h3>
+            </div>
+
+            <div class="user_data">
+                <div class="user_name">
+                    User Name
+                </div>
+                <a href="#" class="cta_btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+
+
+    <div class="toDoLists flex">
+        <div class="row flex">
+            <div class="toDoListForm flex">
+                <h1>To Do Lists</h1>
+
+                <form class="tdlForm flex">
+                    <input type="text" name="item" id="itemField" placeholder="Enter your item">
+                    <input type="submit" value="Add Item" class="cta_btn">
+                </form>
+            </div>
+            <div class="displayItems">
+                <ul>
+                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
+                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
+                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/script.js"></script>
+</body>
+
+</html>
