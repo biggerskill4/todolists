@@ -7,6 +7,9 @@
     <title>To Do Lists</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="shortcut icon" href="./Images/favicon.ico" type="image/x-icon">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 
 <body>
@@ -36,14 +39,27 @@
 
                 <form class="tdlForm flex">
                     <input type="text" name="item" id="itemField" placeholder="Enter your item">
-                    <input type="submit" value="Add Item" class="cta_btn">
+                    <!-- <input type="submit" value="Add Item" class="cta_btn"> -->
+                    <button type="submit" class="cta_btn"><ion-icon name="add-sharp"></ion-icon></button>
                 </form>
             </div>
             <div class="displayItems">
                 <ul>
-                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
-                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
-                    <li><div class="text">Task Number 1</div> <div class="list_btn"><a href="#" class="cta_btn">Update</a><a href="#" class="cta_btn">Delete</a></div></li>
+                    <li>
+                        <div class="text">Task Number 1</div>
+                        <div class="list_btn"><a href="#" class="cta_btn"><ion-icon name="pencil-sharp"></ion-icon></a><a href="#" class="cta_btn"><ion-icon name="trash-sharp"></ion-icon></a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="text">Task Number 1</div>
+                        <div class="list_btn"><a href="#" class="cta_btn"><ion-icon name="pencil-sharp"></ion-icon></a><a href="#" class="cta_btn"><ion-icon name="trash-sharp"></ion-icon></a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="text">Task Number 1</div>
+                        <div class="list_btn"><a href="#" class="cta_btn"><ion-icon name="pencil-sharp"></ion-icon></a><a href="#" class="cta_btn"><ion-icon name="trash-sharp"></ion-icon></a>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>

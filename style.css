@@ -16,6 +16,7 @@ body {
     background: red;
     color: #fff;
     transition: 0.3s;
+    border-radius: 5px;
 }
 
 .cta_btn:hover {
@@ -85,19 +86,32 @@ form.tdlForm {
 }
 
 .tdlForm input#itemField {
-    width: 80%;
+    width: 90%;
     padding: 15px;
     border: 1px solid #00000030;
+    border-radius: 5px;
+    height: 50px;
 }
 .tdlForm input#itemField:focus {
     outline: none;
 }
 
-.tdlForm input[type="submit"] {
-    width: 20%;
+.tdlForm button[type="submit"] {
+    width: 10%;
     border: none;
-    padding: 15px;
+    padding: 0px;
     border: 1px solid red;
+    cursor: pointer;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tdlForm button[type="submit"]:hover {
+    border: #000;
+}
+.tdlForm button[type="submit"]  ion-icon.md.hydrated {
+    font-size: 30px;
 }
 
 
@@ -112,7 +126,7 @@ form.tdlForm {
 .displayItems ul {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
 }
 
 .displayItems ul li {
@@ -121,10 +135,20 @@ form.tdlForm {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* border: 1px solid #00000030; */
+    padding: 10px 20px;
+    border-radius: 50px;
+    background: #f4f4ff;
+    box-shadow: 0 0 5px #00000030;
 }
-
 .displayItems ul li .cta_btn {
-    font-size: 12px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.displayItems ul li .cta_btn ion-icon.md.hydrated {
+    font-size: 18px;
 }
 
 .displayItems ul li .list_btn {
@@ -133,3 +157,4 @@ form.tdlForm {
     align-items: center;
     gap: 10px;
 }
+
