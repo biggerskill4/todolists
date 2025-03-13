@@ -10,6 +10,15 @@
 body {
     background: #f4f4ff;
 }
+::-moz-selection { /* Code for Firefox */
+    color: #000;
+    background: red;
+  }
+  
+  ::selection {
+    color: #000;
+    background: red;
+  }
 
 .cta_btn {
     padding: 10px 20px;
@@ -25,6 +34,7 @@ body {
 
 a {
     text-decoration: none;
+    color: red;
 }
 
 .flex {
@@ -70,6 +80,9 @@ header .user_data {
     flex-direction: column;
     gap: 20px;
     width: 700px;
+}
+.toDoLists .row h1 {
+    color: red;
 }
 
 .toDoLists .toDoListForm {
@@ -140,7 +153,13 @@ form.tdlForm {
     border-radius: 50px;
     background: #f4f4ff;
     box-shadow: 0 0 5px #00000030;
+    transition: 0.3s;
 }
+
+.displayItems ul li:hover {
+    transform: scale(1.05);
+}
+
 .displayItems ul li .cta_btn {
     padding: 10px;
     display: flex;
@@ -158,3 +177,79 @@ form.tdlForm {
     gap: 10px;
 }
 
+/* Login signup form */
+
+.loginHeading, form[name=loginForm] {
+    display: none;
+}
+
+.account {
+    width: 100%;
+    height: 100vh;
+}
+
+.account .row {
+    flex-direction: column;
+    width: 500px;
+    background: #fff;
+    padding: 50px;
+    height: 600px;
+    box-shadow: 0 0 5px #00000030;
+    border-radius: 10px;
+    gap: 10px;
+}
+.account h2 {
+    font-size: 40px;
+    color: red;
+}
+
+.account .tabs {
+    width: 100%;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.account .tabs .tabBtn.active {
+    background: red;
+    color: #fff;
+    border: 1px solid red;
+} 
+
+.account .tabs .tabBtn {
+    width: 50%;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #00000030;
+    transition: 0.3s;
+}
+
+.account .tabs .tabBtn:hover {
+    background: red;
+    color: #fff;
+}
+
+
+.account .accountForm {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.account .accountForm input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #00000030;
+    border-radius: 5px;
+}
+
+.account .accountForm input:focus {
+    outline: none;
+}
+
+.account .accountForm .cta_btn {
+    width: 100%;
+    border: none;
+    padding: 15px;
+}
