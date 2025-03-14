@@ -6,6 +6,16 @@ const displayItems = document.querySelector('.displayItems');
 
 document.addEventListener("DOMContentLoaded", myLists);
 
+document.addEventListener("DOMContentLoaded", () => {
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (currentUser) {
+        console.log(currentUser.signUpEmailAddress);
+    }
+
+});
+
+
 toDoListForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let itemFieldText = itemField.value.trim();
@@ -83,3 +93,4 @@ function editTask(e) {
         myLists();
     }
 }
+

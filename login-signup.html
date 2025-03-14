@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Login | Signup</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="shortcut icon" href="./Images/favicon.ico" type="image/x-icon">
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -17,32 +17,37 @@
 
     <div class="account flex">
         <div class="row flex">
-            <h2 class="loginHeading">Login</h2>
-            <h2 class="signUpHeading">Signup</h2>
-            <div class="tabs flex">
-                <a href="#" class="loginBtn tabBtn">Login</a>
-                <a href="#" class="signUpBtn tabBtn active">Signup</a>
+            <div class="main_tabs">
+                <h2 class="loginHeading">Login</h2>
+                <h2 class="signUpHeading">Signup</h2>
+                <div class="tabs flex">
+                    <a href="#" class="loginBtn tabBtn">Login</a>
+                    <a href="#" class="signUpBtn tabBtn active">Signup</a>
+                </div>
             </div>
             <form class="accountForm flex" name="loginForm">
-                <input type="email" placeholder="Your email" id="emailAddress">
-                <input type="password" placeholder="Your password" id="pswd">
+                <input type="email" placeholder="Your email" id="loginEmailAddress">
+                <input type="password" placeholder="Your password" id="loginPswd">
                 <button type="submit" class="cta_btn">Login</button>
                 <a href="#" class="resetPswd">Forgot Password</a>
             </form>
 
             <form class="accountForm flex" name="signUpForm">
-                <input type="text" placeholder="Type username" id="username">
-                <input type="email" placeholder="Type email" id="emailAddress">
-                <input type="password" placeholder="Type password" id="pswd">
-                <input type="password" placeholder="Confirm password" id="ConfirmPswd">
+                <input type="text" placeholder="Full name" id="username">
+                <input type="email" placeholder="Type email" id="signUpEmailAddress">
+                <input type="password" placeholder="Type password" id="signUpPswd">
+                <input type="password" placeholder="Confirm password" id="signUpConfirmPswd">
                 <button type="submit" class="cta_btn">Signup</button>
             </form>
+            <div class="copyright">
+                <p>Designed & Developed by <span>"Subhan Ahmed"</span></p>
+            </div>
         </div>
     </div>
 
 
 
-    <script src="./login_form.js"></script>
+    <script src="./assets/js/login_form.js"></script>
 </body>
 
 </html>
