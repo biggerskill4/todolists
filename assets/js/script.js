@@ -3,14 +3,18 @@ const itemField = document.querySelector('#itemField');
 const itemBtn = document.querySelector('.tdlForm button[type="submit"]');
 const itemLists = document.querySelector('.displayItems ul');
 const displayItems = document.querySelector('.displayItems');
-
-document.addEventListener("DOMContentLoaded", myLists);
+const logOutBtn = document.querySelector('.logOutBtn');
 
 document.addEventListener("DOMContentLoaded", () => {
+    myLists();
+
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
     if (currentUser) {
-        console.log(currentUser.signUpEmailAddress);
+        let userName = document.querySelector(".user_name");
+        userName.textContent = currentUser.username;
+    } else {
+        window.location.href = "./login-signup.html"; 
     }
 
 });
@@ -60,7 +64,6 @@ function myLists() {
         displayItems.style.display = "none";
     }
 
-        // Add event listeners for delete and edit buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', deleteTask);
     });
@@ -94,3 +97,9 @@ function editTask(e) {
     }
 }
 
+
+logOutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    localStorage.removeItem("currentUser");
+    window.location.href = "./login-signup.html";
+})

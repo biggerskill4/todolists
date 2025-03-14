@@ -288,3 +288,51 @@ footer {
     left: 0;
     padding: 10px;
 }
+
+@media(max-width: 1440px) {
+    header .row {
+        width: 100%;
+    }
+
+}
+@media(max-width: 700px) {
+    .toDoLists .row {
+        width: 100%;
+    }
+}
+
+@media(max-width: 500px) {
+    header {
+        padding: 10px;
+    }
+    header h3 {
+        font-size: 20px;
+    }
+    .toDoLists .toDoListForm {
+        padding: 50px 20px;
+    }
+    .tdlForm input#itemField {
+        width: 80%;
+    }
+    .tdlForm button[type="submit"] {
+        width: 20%;
+    }
+    .displayItems {
+        padding: 30px 10px;
+    }
+    .logOutBtn {
+        padding: 7px 10px;
+    }
+    .tdlForm input#itemField, .tdlForm button[type="submit"] {
+        height: 40px;
+    }
+    .account .row {
+        width: 100%;
+    }
+    .account .row {
+        padding: 30px 15px;
+    }
+    .row.flex {
+        margin: 10px;
+    }
+}

@@ -70,18 +70,17 @@ if (loginForm) {
 
         let users = JSON.parse(localStorage.getItem("users")) || [];
 
-        let loggedInUser = users.some(user => user.signUpEmailAddress === loginEmailAddress && user.signUpPswd === loginPswd);
+        let loggedInUser = users.find(user => 
+            user.signUpEmailAddress === loginEmailAddress && 
+            user.signUpPswd === loginPswd && user.username
+        );
 
         if (loggedInUser) {
-
             localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
             window.location.href = "./index.html";
-
         } else {
             alert("Invalid email or password. Please try again.");
-            loginForm.reset();
-            return;
         }
+        
     });
 };
-
