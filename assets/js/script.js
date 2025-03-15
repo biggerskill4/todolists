@@ -29,9 +29,12 @@ toDoListForm.addEventListener('submit', (e) => {
         return;
     }
 
-    let tasks = JSON.parse(localStorage.getItem("toDoList")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userToDoKey = `toDoLists_${currentUser.username}`; 
+
+    let tasks = JSON.parse(localStorage.getItem(userToDoKey)) || [];
     tasks.push(itemFieldText);
-    localStorage.setItem("toDoList", JSON.stringify(tasks));
+    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
 
     itemField.value = '';
     myLists();
@@ -39,7 +42,10 @@ toDoListForm.addEventListener('submit', (e) => {
 
 
 function myLists() {
-    let taskLists = JSON.parse(localStorage.getItem("toDoList")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userToDoKey = `toDoLists_${currentUser.username}`; 
+
+    let taskLists = JSON.parse(localStorage.getItem(userToDoKey)) || [];
     itemLists.innerHTML = "";
 
     taskLists.forEach((task, index) => {
@@ -76,23 +82,31 @@ function myLists() {
 
 function deleteTask(e) {
     e.preventDefault;
+
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
+
     let index = e.target.closest('.delete-btn').getAttribute('data-index');
-    let tasks = JSON.parse(localStorage.getItem("toDoList") || []);
     tasks.splice(index, 1);
-    localStorage.setItem("toDoList", JSON.stringify(tasks));
+    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
     myLists();
 }
 
 
 function editTask(e) {
     e.preventDefault();
+
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
+
     let index = e.target.closest('.edit-btn').getAttribute('data-index');
-    let tasks = JSON.parse(localStorage.getItem("toDoList") || []);
     let newValue = prompt("Edit your Task", tasks[index]);
 
     if(newValue !== null && newValue.trim() !== "") {
         tasks[index] = newValue.trim() ;
-        localStorage.setItem("toDoList", JSON.stringify(tasks));
+        localStorage.setItem(userToDoKey, JSON.stringify(tasks));
         myLists();
     }
 }

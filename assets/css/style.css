@@ -289,6 +289,30 @@ footer {
     padding: 10px;
 }
 
+.password a {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    z-index: 999;
+    transform: translateY(-50%);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.password {
+    width: 100%;
+    position: relative;
+}
+
+
+.password ion-icon.md.hydrated {
+    font-size: 20px;
+    color: #00000059;
+}
+
 @media(max-width: 1440px) {
     header .row {
         width: 100%;
@@ -336,3 +360,4 @@ footer {
         margin: 10px;
     }
 }
+

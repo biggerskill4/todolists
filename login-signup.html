@@ -27,7 +27,10 @@
             </div>
             <form class="accountForm flex" name="loginForm">
                 <input type="email" placeholder="Your email" id="loginEmailAddress">
-                <input type="password" placeholder="Your password" id="loginPswd">
+                <div class="password">
+                    <input type="password" placeholder="Your password" id="loginPswd">
+                    <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
+                </div>
                 <button type="submit" class="cta_btn">Login</button>
                 <a href="#" class="resetPswd">Forgot Password</a>
             </form>
@@ -35,8 +38,14 @@
             <form class="accountForm flex" name="signUpForm">
                 <input type="text" placeholder="Full name" id="username">
                 <input type="email" placeholder="Type email" id="signUpEmailAddress">
-                <input type="password" placeholder="Type password" id="signUpPswd">
-                <input type="password" placeholder="Confirm password" id="signUpConfirmPswd">
+                <div class="password">
+                    <input type="password" placeholder="Type password" id="signUpPswd">
+                    <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
+                </div>
+                <div class="password">
+                    <input type="password" placeholder="Confirm password" id="signUpConfirmPswd">
+                    <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
+                </div>
                 <button type="submit" class="cta_btn">Signup</button>
             </form>
             <div class="copyright">
