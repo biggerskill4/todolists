@@ -30,6 +30,10 @@ toDoListForm.addEventListener('submit', (e) => {
     }
 
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if(!currentUser) {
+        return
+    }
+
     let userToDoKey = `toDoLists_${currentUser.username}`; 
 
     let tasks = JSON.parse(localStorage.getItem(userToDoKey)) || [];
@@ -43,6 +47,10 @@ toDoListForm.addEventListener('submit', (e) => {
 
 function myLists() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if(!currentUser) {
+        return
+    }
+
     let userToDoKey = `toDoLists_${currentUser.username}`; 
 
     let taskLists = JSON.parse(localStorage.getItem(userToDoKey)) || [];
