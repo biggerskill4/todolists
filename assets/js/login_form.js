@@ -1,29 +1,33 @@
+const mainTabs = document.querySelector('.tabsJs');
 const tabLoginBtn = document.querySelector('.loginBtn');
 const tabSignUpBtn = document.querySelector('.signUpBtn');
 const loginHeading = document.querySelector('.loginHeading');
 const signUpHeading = document.querySelector('.signUpHeading');
 const loginForm = document.querySelector('form[name=loginForm]');
 const signUpForm = document.querySelector('form[name=signUpForm]');
+const resetPswd = document.querySelector('form[name=resetPswd]');
 
-tabLoginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    tabLoginBtn.classList.add('active');
-    tabSignUpBtn.classList.remove('active');
-    loginForm.style.display = "flex";
-    signUpForm.style.display = "none";
-    loginHeading.style.display = "block";
-    signUpHeading.style.display = "none";
-});
-
-tabSignUpBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    tabLoginBtn.classList.remove('active');
-    tabSignUpBtn.classList.add('active');
-    loginForm.style.display = "none";
-    signUpForm.style.display = "flex";
-    signUpHeading.style.display = "block";
-    loginHeading.style.display = "none";
-});
+if(mainTabs) {
+    tabLoginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        tabLoginBtn.classList.add('active');
+        tabSignUpBtn.classList.remove('active');
+        loginForm.style.display = "flex";
+        signUpForm.style.display = "none";
+        loginHeading.style.display = "block";
+        signUpHeading.style.display = "none";
+    });
+    
+    tabSignUpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        tabLoginBtn.classList.remove('active');
+        tabSignUpBtn.classList.add('active');
+        loginForm.style.display = "none";
+        signUpForm.style.display = "flex";
+        signUpHeading.style.display = "block";
+        loginHeading.style.display = "none";
+    });
+}
 
 if (signUpForm) {
     signUpForm.addEventListener('submit', (e) => {
@@ -104,6 +108,51 @@ toggleIcons.forEach((icon, index) => {
         }
     })
 })
+
+
+// Password Reset 
+if(resetPswd) {
+    resetPswd.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        if (loginPswd.value !== signUpConfirmPswd.value) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        let userFound = false;
+
+        users.forEach((user, index) => {
+            if(user.signUpEmailAddress === loginEmailAddress.value.trim()) {
+                users[index].signUpPswd = loginPswd.value.trim();
+                userFound = true;
+            }
+        })
+
+        if (!userFound) {
+            alert("Email does not exist!");
+            return;
+        }
+
+        localStorage.setItem("users", JSON.stringify(users));
+
+
+        alert("Password successfully updated!");
+
+        window.location.href = "./login-signup.html";
+    });
+}
+
+
+
+
+
+
+
+
+
 
 
 

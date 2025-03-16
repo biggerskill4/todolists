@@ -11,8 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
     if (currentUser) {
-        let userName = document.querySelector(".user_name");
-        userName.textContent = currentUser.username;
+        let userName = document.querySelector(".user_name .userName");
+        let profilePanel = document.querySelector(".user_name .profilePanel");
+        let shortName = currentUser.username.slice(0, 2);
+        profilePanel.textContent = currentUser.username;
+        userName.textContent = shortName;
     } else {
         window.location.href = "./login-signup.html"; 
     }
@@ -37,7 +40,7 @@ toDoListForm.addEventListener('submit', (e) => {
     let userToDoKey = `toDoLists_${currentUser.username}`; 
 
     let tasks = JSON.parse(localStorage.getItem(userToDoKey)) || [];
-    tasks.push(itemFieldText);
+    tasks.push({task: itemFieldText, status: "pending"});
     localStorage.setItem(userToDoKey, JSON.stringify(tasks));
 
     itemField.value = '';
@@ -59,8 +62,11 @@ function myLists() {
     taskLists.forEach((task, index) => {
         let li = document.createElement("li");
         li.innerHTML = `
-            <div class="text">${task}</div>
+            <div class="text">${task.task}</div>
             <div class="list_btn">
+                <a href="#" class="cta_btn status-btn" data-index="${index}">
+                    <span class="taskStatus"></span>
+                </a>
                 <a href="#" class="cta_btn edit-btn" data-index="${index}">
                     <ion-icon name="pencil-sharp"></ion-icon>
                 </a>
@@ -78,6 +84,10 @@ function myLists() {
         displayItems.style.display = "none";
     }
 
+    document.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', taskStatus);
+    });
+
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', deleteTask);
     });
@@ -86,6 +96,28 @@ function myLists() {
         btn.addEventListener('click', editTask);
     });
 
+}
+
+function taskStatus(e) {
+    e.preventDefault();
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
+
+    let index = e.target.closest('.status-btn').getAttribute('data-index');
+    let statusBtn = e.target.closest('.status-btn');
+    let taskStatusElement = statusBtn.querySelector('.taskStatus');
+
+    if (tasks[index].status === "pending") {
+        tasks[index].status = "completed";
+        
+    } else {
+        tasks[index].status = "pending";
+        
+    }
+
+    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
+    myLists();
 }
 
 function deleteTask(e) {
@@ -101,7 +133,6 @@ function deleteTask(e) {
     myLists();
 }
 
-
 function editTask(e) {
     e.preventDefault();
 
@@ -110,10 +141,10 @@ function editTask(e) {
     let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
 
     let index = e.target.closest('.edit-btn').getAttribute('data-index');
-    let newValue = prompt("Edit your Task", tasks[index]);
+    let newValue = prompt("Edit your Task", tasks[index].task);
 
     if(newValue !== null && newValue.trim() !== "") {
-        tasks[index] = newValue.trim() ;
+        tasks[index].task = newValue.trim() ;
         localStorage.setItem(userToDoKey, JSON.stringify(tasks));
         myLists();
     }
@@ -127,17 +158,6 @@ logOutBtn.addEventListener('click', (e) => {
 })
 
 
-
-// // Create cursor element
-// const cursor = document.createElement("div");
-// cursor.classList.add("custom-cursor");
-// document.body.appendChild(cursor);
-
-// // Update cursor position on mouse move
-// document.addEventListener("mousemove", (e) => {
-//     cursor.style.left = `${e.clientX}px`;
-//     cursor.style.top = `${e.clientY}px`;
-// });
 
 
 // Create cursor element
