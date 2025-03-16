@@ -63,6 +63,13 @@ header .row {
 header h3 {
     color: red;
     font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.site_title h3 ion-icon.md.hydrated {
+    font-size: 36px;
 }
 
 header .user_data {
@@ -313,6 +320,26 @@ footer {
     color: #00000059;
 }
 
+
+.complete-task ion-icon.md.hydrated {
+    font-size: 28px;
+}
+
+a.complete-task {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
 @media(max-width: 1440px) {
     header .row {
         width: 100%;
@@ -329,8 +356,25 @@ footer {
     header {
         padding: 10px;
     }
+    header .row.flex {
+        margin: 0;
+        flex-direction: column;
+        gap: 5px;
+    }
+    header .user_data {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
     header h3 {
-        font-size: 20px;
+        font-size: 26px;
+    }
+    .site_title h3 ion-icon.md.hydrated {
+        font-size: 30px;
+    }
+    
+    .toDoLists .row h1 {
+        font-size: 24px;
     }
     .toDoLists .toDoListForm {
         padding: 50px 20px;
@@ -361,3 +405,15 @@ footer {
     }
 }
 
+
+.custom-cursor {
+    position: fixed;
+    width: 30px; 
+    height: 30px;
+    background: red; 
+    border-radius: 50%;
+    pointer-events: none;
+    mix-blend-mode: difference; 
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+}

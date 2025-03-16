@@ -84,3 +84,23 @@ if (loginForm) {
         
     });
 };
+
+
+const passwordFields = document.querySelectorAll(".password input");
+const toggleIcons = document.querySelectorAll(".password a ion-icon");
+
+toggleIcons.forEach((icon, index) => {
+    icon.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        let passwordInput = passwordFields[index];
+
+        if(passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.setAttribute("name", "eye-outline");
+        } else {
+            passwordInput.type = "password";
+            icon.setAttribute("name", "eye-off-outline");
+        }
+    })
+})
