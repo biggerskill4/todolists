@@ -13,7 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentUser) {
         let userName = document.querySelector(".user_name .userName");
         let profilePanel = document.querySelector(".user_name .profilePanel");
-        let shortName = currentUser.username.slice(0, 2);
+        let nameIndex = currentUser.username.indexOf(' ');
+        let nameFirstLetter = currentUser.username[0];
+        let nameSecondLetter = currentUser.username[nameIndex + 1];
+        let shortName = nameFirstLetter + nameSecondLetter;
         profilePanel.textContent = currentUser.username;
         userName.textContent = shortName;
     } else {
