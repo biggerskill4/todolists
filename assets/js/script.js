@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         profilePanel.textContent = currentUser.username;
         userName.textContent = shortName;
     } else {
-        window.location.href = "./login-signup.html"; 
+        window.location.href = "./login-signup.html";
     }
 
 });
@@ -36,14 +36,14 @@ toDoListForm.addEventListener('submit', (e) => {
     }
 
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if(!currentUser) {
+    if (!currentUser) {
         return
     }
 
-    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let userToDoKey = `toDoLists_${currentUser.username}`;
 
     let tasks = JSON.parse(localStorage.getItem(userToDoKey)) || [];
-    tasks.push({task: itemFieldText, status: "pending"});
+    tasks.push({ task: itemFieldText, status: "pending" });
     localStorage.setItem(userToDoKey, JSON.stringify(tasks));
 
     itemField.value = '';
@@ -53,35 +53,42 @@ toDoListForm.addEventListener('submit', (e) => {
 
 function myLists() {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if(!currentUser) {
+    if (!currentUser) {
         return
     }
 
-    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let userToDoKey = `toDoLists_${currentUser.username}`;
 
     let taskLists = JSON.parse(localStorage.getItem(userToDoKey)) || [];
     itemLists.innerHTML = "";
 
     taskLists.forEach((task, index) => {
+
+        let statusClass = task.status === "completed" ? "completed" : "pending";
+        let statusText = task.status === "completed" ? "Completed" : "Pending";
+
         let li = document.createElement("li");
         li.innerHTML = `
-            <div class="text">${task.task}</div>
-            <div class="list_btn">
-                <a href="#" class="cta_btn status-btn" data-index="${index}">
-                    <span class="taskStatus"></span>
-                </a>
-                <a href="#" class="cta_btn edit-btn" data-index="${index}">
-                    <ion-icon name="pencil-sharp"></ion-icon>
-                </a>
-                <a href="#" class="cta_btn delete-btn" data-index="${index}">
-                    <ion-icon name="trash-sharp"></ion-icon>
-                </a>
-            </div>`;
+        <div class="text ${task.status === "completed" ? "done" : ""}">${task.task}</div>
+        <div class="list_btn">
+            <a href="#" class="cta_btn status-btn ${statusClass}" data-index="${index}">
+                <span class="taskStatus">${statusText}</span>
+            </a>
+            <a href="#" class="cta_btn edit-btn" data-index="${index}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+            </a>
+            <a href="#" class="cta_btn delete-btn" data-index="${index}">
+                <ion-icon name="trash-sharp"></ion-icon>
+            </a>
+        </div>`;
 
         itemLists.appendChild(li);
     });
 
-    if(itemLists.querySelector('li')) {
+    if (itemLists.querySelector('li')) {
         displayItems.style.display = "block";
     } else {
         displayItems.style.display = "none";
@@ -104,7 +111,7 @@ function myLists() {
 function taskStatus(e) {
     e.preventDefault();
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let userToDoKey = `toDoLists_${currentUser.username}`;
     let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
 
     let index = e.target.closest('.status-btn').getAttribute('data-index');
@@ -113,10 +120,10 @@ function taskStatus(e) {
 
     if (tasks[index].status === "pending") {
         tasks[index].status = "completed";
-        
+
     } else {
         tasks[index].status = "pending";
-        
+
     }
 
     localStorage.setItem(userToDoKey, JSON.stringify(tasks));
@@ -127,7 +134,7 @@ function deleteTask(e) {
     e.preventDefault;
 
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let userToDoKey = `toDoLists_${currentUser.username}`;
     let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
 
     let index = e.target.closest('.delete-btn').getAttribute('data-index');
@@ -140,14 +147,14 @@ function editTask(e) {
     e.preventDefault();
 
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`; 
+    let userToDoKey = `toDoLists_${currentUser.username}`;
     let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
 
     let index = e.target.closest('.edit-btn').getAttribute('data-index');
     let newValue = prompt("Edit your Task", tasks[index].task);
 
-    if(newValue !== null && newValue.trim() !== "") {
-        tasks[index].task = newValue.trim() ;
+    if (newValue !== null && newValue.trim() !== "") {
+        tasks[index].task = newValue.trim();
         localStorage.setItem(userToDoKey, JSON.stringify(tasks));
         myLists();
     }

@@ -233,7 +233,7 @@ form.tdlForm {
     gap: 10px;
 }
 
-a.cta_btn.status-btn {
+/* a.cta_btn.status-btn {
     background: none;
     color: gray;
     padding: 0px !important;
@@ -249,16 +249,28 @@ a.cta_btn.status-btn {
     height: 100%;
     background: lightgray;
     border-radius: 50%;
+} */
+
+.status-btn {
+    padding: 4px 10px;
+    font-size: 12px;
 }
 
-.completed-color {
-    background: green !important; /* Change text color to green */
+/* Pending */
+.status-btn.pending {
+    color: #FFF;
 }
 
-.pending-color {
-    background: red !important; /* Change text color to red */
+/* Completed */
+.status-btn.completed {
+    color: white;
+    background: #00c853;
 }
 
+.text.done{
+    text-decoration: line-through;
+    opacity: 0.6;
+}
 /* Login signup form */
 
 .loginHeading,
