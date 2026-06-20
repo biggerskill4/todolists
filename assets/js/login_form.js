@@ -1,8 +1,3 @@
-// assets/js/login_form.js
-// Updated login/signup with Supabase integration
-
-import { signUp, logIn, resetPassword } from './supabase-config.js';
-
 const mainTabs = document.querySelector('.tabsJs');
 const tabLoginBtn = document.querySelector('.loginBtn');
 const tabSignUpBtn = document.querySelector('.signUpBtn');
@@ -10,13 +5,9 @@ const loginHeading = document.querySelector('.loginHeading');
 const signUpHeading = document.querySelector('.signUpHeading');
 const loginForm = document.querySelector('form[name=loginForm]');
 const signUpForm = document.querySelector('form[name=signUpForm]');
-const resetPswdForm = document.querySelector('form[name=resetPswd]');
+const resetPswd = document.querySelector('form[name=resetPswd]');
 
-// ============================================================
-// TAB SWITCHING
-// ============================================================
-
-if (mainTabs) {
+if(mainTabs) {
     tabLoginBtn.addEventListener('click', (e) => {
         e.preventDefault();
         tabLoginBtn.classList.add('active');
@@ -38,12 +29,8 @@ if (mainTabs) {
     });
 }
 
-// ============================================================
-// SIGN UP FORM HANDLER
-// ============================================================
-
 if (signUpForm) {
-    signUpForm.addEventListener('submit', async (e) => {
+    signUpForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const username = signUpForm.querySelector('input#username').value.trim();
@@ -51,24 +38,8 @@ if (signUpForm) {
         const signUpPswd = signUpForm.querySelector('input#signUpPswd').value;
         const signUpConfirmPswd = signUpForm.querySelector('input#signUpConfirmPswd').value;
 
-        // Validation
         if (!username || !signUpEmailAddress || !signUpPswd || !signUpConfirmPswd) {
             alert("All fields are required!");
-            return;
-        }
-
-        if (username.length < 2) {
-            alert("Username must be at least 2 characters long!");
-            return;
-        }
-
-        if (signUpEmailAddress.length < 5 || !signUpEmailAddress.includes('@')) {
-            alert("Please enter a valid email!");
-            return;
-        }
-
-        if (signUpPswd.length < 6) {
-            alert("Password must be at least 6 characters long!");
             return;
         }
 
@@ -77,87 +48,47 @@ if (signUpForm) {
             return;
         }
 
-        try {
-            // Show loading state
-            const signUpBtn = signUpForm.querySelector('button[type="submit"]');
-            const originalText = signUpBtn.textContent;
-            signUpBtn.textContent = "Creating account...";
-            signUpBtn.disabled = true;
-
-            // Call Supabase signup
-            const result = await signUp(signUpEmailAddress, signUpPswd, username);
-
-            if (result.success) {
-                alert("Sign Up Successful! Please verify your email and log in.");
-                signUpForm.reset();
-                // Switch to login tab
-                tabLoginBtn.click();
-            } else {
-                alert(`Sign up failed: ${result.error}`);
-            }
-
-            // Restore button
-            signUpBtn.textContent = originalText;
-            signUpBtn.disabled = false;
-
-        } catch (error) {
-            console.error('Sign up error:', error);
-            alert(`An error occurred: ${error.message}`);
-        }
-    });
-}
-
-// ============================================================
-// LOGIN FORM HANDLER
-// ============================================================
-
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const loginEmailAddress = loginForm.querySelector('input#loginEmailAddress').value.trim();
-        const loginPswd = loginForm.querySelector('input#loginPswd').value;
-
-        // Validation
-        if (!loginEmailAddress || !loginPswd) {
-            alert("Email and password are required!");
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let isEmailExists = users.some(user => user.signUpEmailAddress === signUpEmailAddress)
+        if (isEmailExists) {
+            alert("This email is already registered!");
             return;
         }
 
-        try {
-            // Show loading state
-            const loginBtn = loginForm.querySelector('button[type="submit"]');
-            const originalText = loginBtn.textContent;
-            loginBtn.textContent = "Logging in...";
-            loginBtn.disabled = true;
+        let newUsers = { username, signUpEmailAddress, signUpPswd };
+        users.push(newUsers);
 
-            // Call Supabase login
-            const result = await logIn(loginEmailAddress, loginPswd);
+        localStorage.setItem("users", JSON.stringify(users));
 
-            if (result.success) {
-                // Store user info in localStorage
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                
-                // Redirect to main app
-                window.location.href = "./index.html";
-            } else {
-                alert(`Login failed: ${result.error}`);
-            }
-
-            // Restore button
-            loginBtn.textContent = originalText;
-            loginBtn.disabled = false;
-
-        } catch (error) {
-            console.error('Login error:', error);
-            alert(`An error occurred: ${error.message}`);
-        }
+        alert("Sign Up Successful!");
+        signUpForm.reset();
     });
 }
 
-// ============================================================
-// PASSWORD TOGGLE
-// ============================================================
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const loginEmailAddress = loginForm.querySelector('input#loginEmailAddress').value;
+        const loginPswd = loginForm.querySelector('input#loginPswd').value;
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        let loggedInUser = users.find(user => 
+            user.signUpEmailAddress === loginEmailAddress && 
+            user.signUpPswd === loginPswd && user.username
+        );
+
+        if (loggedInUser) {
+            localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
+            window.location.href = "./index.html";
+        } else {
+            alert("Invalid email or password. Please try again.");
+        }
+        
+    });
+};
+
 
 const passwordFields = document.querySelectorAll(".password input");
 const toggleIcons = document.querySelectorAll(".password a ion-icon");
@@ -168,93 +99,80 @@ toggleIcons.forEach((icon, index) => {
 
         let passwordInput = passwordFields[index];
 
-        if (passwordInput.type === "password") {
+        if(passwordInput.type === "password") {
             passwordInput.type = "text";
             icon.setAttribute("name", "eye-outline");
         } else {
             passwordInput.type = "password";
             icon.setAttribute("name", "eye-off-outline");
         }
-    });
-});
+    })
+})
 
-// ============================================================
-// PASSWORD RESET HANDLER
-// ============================================================
 
-if (resetPswdForm) {
-    resetPswdForm.addEventListener('submit', async (e) => {
+// Password Reset 
+if(resetPswd) {
+    resetPswd.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const resetEmail = resetPswdForm.querySelector('input[type="email"]')?.value.trim();
+        let users = JSON.parse(localStorage.getItem("users")) || [];
 
-        if (!resetEmail) {
-            alert("Please enter your email address!");
+        if (loginPswd.value !== signUpConfirmPswd.value) {
+            alert("Passwords do not match!");
             return;
         }
 
-        try {
-            const resetBtn = resetPswdForm.querySelector('button[type="submit"]');
-            const originalText = resetBtn.textContent;
-            resetBtn.textContent = "Sending...";
-            resetBtn.disabled = true;
+        let userFound = false;
 
-            const result = await resetPassword(resetEmail);
-
-            if (result.success) {
-                alert("Password reset email sent! Check your inbox.");
-                resetPswdForm.reset();
-                // Redirect to login after 2 seconds
-                setTimeout(() => {
-                    window.location.href = "./login-signup.html";
-                }, 2000);
-            } else {
-                alert(`Error: ${result.error}`);
+        users.forEach((user, index) => {
+            if(user.signUpEmailAddress === loginEmailAddress.value.trim()) {
+                users[index].signUpPswd = loginPswd.value.trim();
+                userFound = true;
             }
+        })
 
-            resetBtn.textContent = originalText;
-            resetBtn.disabled = false;
-
-        } catch (error) {
-            console.error('Password reset error:', error);
-            alert(`An error occurred: ${error.message}`);
+        if (!userFound) {
+            alert("Email does not exist!");
+            return;
         }
+
+        localStorage.setItem("users", JSON.stringify(users));
+
+
+        alert("Password successfully updated!");
+
+        window.location.href = "./login-signup.html";
     });
 }
 
-// ============================================================
-// CHECK IF ALREADY LOGGED IN
-// ============================================================
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            // Redirect to main app if already logged in
-            window.location.href = "./index.html";
-        }
-    } catch (error) {
-        console.error('Auth check error:', error);
-    }
-});
 
-// ============================================================
-// CUSTOM CURSOR
-// ============================================================
 
+
+
+
+
+
+
+
+
+
+// Create cursor element
 const cursor = document.createElement("div");
 cursor.classList.add("custom-cursor");
 document.body.appendChild(cursor);
 
 let mouseX = 0, mouseY = 0;
 let cursorX = 0, cursorY = 0;
-const speed = 0.1;
+const speed = 0.1; // Adjust this value for slower or faster movement
 
+// Update target mouse position
 document.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 });
 
+// Animate cursor movement
 function animateCursor() {
     cursorX += (mouseX - cursorX) * speed;
     cursorY += (mouseY - cursorY) * speed;
@@ -265,4 +183,5 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 
+// Start animation loop
 animateCursor();
