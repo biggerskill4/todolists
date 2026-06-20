@@ -1,3 +1,17 @@
+// assets/js/script.js
+// Updated main app with Supabase real-time sync
+
+import { 
+    supabase,
+    addTask, 
+    getTasks, 
+    updateTask, 
+    deleteTask,
+    logOut,
+    subscribeToTasks
+} from './supabase-config.js';
+
+// DOM Elements
 const toDoListForm = document.querySelector('.tdlForm');
 const itemField = document.querySelector('#itemField');
 const itemBtn = document.querySelector('.tdlForm button[type="submit"]');
@@ -5,187 +19,412 @@ const itemLists = document.querySelector('.displayItems ul');
 const displayItems = document.querySelector('.displayItems');
 const logOutBtn = document.querySelector('.logOutBtn');
 
-document.addEventListener("DOMContentLoaded", () => {
-    myLists();
+// State
+let currentUser = null;
+let subscription = null;
+let isLoading = false;
 
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+// ============================================================
+// INITIALIZATION
+// ============================================================
 
-    if (currentUser) {
-        let userName = document.querySelector(".user_name .userName");
-        let profilePanel = document.querySelector(".user_name .profilePanel");
-        let nameIndex = currentUser.username.indexOf(' ');
-        let nameFirstLetter = currentUser.username[0];
-        let nameSecondLetter = currentUser.username[nameIndex + 1];
-        let shortName = nameFirstLetter + nameSecondLetter;
-        profilePanel.textContent = currentUser.username;
-        userName.textContent = shortName;
-    } else {
-        window.location.href = "./login-signup.html";
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Check if user is logged in
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+            window.location.href = "./login-signup.html";
+            return;
+        }
+
+        // Get current user from localStorage (set during login)
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (!currentUser) {
+            window.location.href = "./login-signup.html";
+            return;
+        }
+
+        // Update UI with user name
+        updateUserDisplay(currentUser);
+
+        // Load initial tasks
+        await loadTasks();
+
+        // Subscribe to real-time updates
+        subscribeToTaskUpdates();
+
+    } catch (error) {
+        console.error('Initialization error:', error);
+        alert('Error loading app. Please refresh.');
     }
-
 });
 
+// ============================================================
+// USER DISPLAY
+// ============================================================
 
-toDoListForm.addEventListener('submit', (e) => {
+function updateUserDisplay(user) {
+    try {
+        const userName = document.querySelector(".user_name .userName");
+        const profilePanel = document.querySelector(".user_name .profilePanel");
+        
+        if (user.username) {
+            const nameIndex = user.username.indexOf(' ');
+            const nameFirstLetter = user.username[0];
+            const nameSecondLetter = nameIndex > -1 ? user.username[nameIndex + 1] : user.username[1];
+            const shortName = (nameFirstLetter + nameSecondLetter).toUpperCase();
+            
+            profilePanel.textContent = user.username;
+            userName.textContent = shortName;
+        } else if (user.email) {
+            const shortName = user.email.substring(0, 2).toUpperCase();
+            profilePanel.textContent = user.email;
+            userName.textContent = shortName;
+        }
+    } catch (error) {
+        console.error('Update user display error:', error);
+    }
+}
+
+// ============================================================
+// ADD TASK
+// ============================================================
+
+toDoListForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    let itemFieldText = itemField.value.trim();
+    
+    if (isLoading) return;
+    
+    const itemFieldText = itemField.value.trim();
 
     if (itemFieldText === "") {
-        alert('Type something');
+        alert('Please enter a task');
         return;
     }
 
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (!currentUser) {
-        return
+        alert('User not found. Please log in again.');
+        window.location.href = "./login-signup.html";
+        return;
     }
 
-    let userToDoKey = `toDoLists_${currentUser.username}`;
+    try {
+        isLoading = true;
+        itemBtn.disabled = true;
+        itemBtn.innerHTML = '<ion-icon name="hourglass"></ion-icon>';
 
-    let tasks = JSON.parse(localStorage.getItem(userToDoKey)) || [];
-    tasks.push({ task: itemFieldText, status: "pending" });
-    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
+        // Add task to Supabase
+        const result = await addTask(currentUser.id, itemFieldText);
 
-    itemField.value = '';
-    myLists();
+        if (result.success) {
+            itemField.value = '';
+            // Tasks will be updated via real-time subscription
+        } else {
+            alert(`Error adding task: ${result.error}`);
+        }
+
+    } catch (error) {
+        console.error('Add task error:', error);
+        alert('Error adding task. Please try again.');
+    } finally {
+        isLoading = false;
+        itemBtn.disabled = false;
+        itemBtn.innerHTML = '<ion-icon name="add-sharp"></ion-icon>';
+    }
 });
 
+// ============================================================
+// LOAD TASKS
+// ============================================================
 
-function myLists() {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser) {
-        return
+async function loadTasks() {
+    try {
+        if (!currentUser) return;
+
+        const result = await getTasks(currentUser.id);
+
+        if (result.success) {
+            renderTasks(result.data);
+        } else {
+            console.error('Error loading tasks:', result.error);
+            alert('Error loading tasks. Please refresh.');
+        }
+    } catch (error) {
+        console.error('Load tasks error:', error);
     }
+}
 
-    let userToDoKey = `toDoLists_${currentUser.username}`;
+// ============================================================
+// RENDER TASKS
+// ============================================================
 
-    let taskLists = JSON.parse(localStorage.getItem(userToDoKey)) || [];
+function renderTasks(tasks) {
     itemLists.innerHTML = "";
 
-    taskLists.forEach((task, index) => {
+    if (!tasks || tasks.length === 0) {
+        displayItems.style.display = "none";
+        return;
+    }
 
-        let statusClass = task.status === "completed" ? "completed" : "pending";
-        let statusText = task.status === "completed" ? "Completed" : "Pending";
+    tasks.forEach((task) => {
+        const statusClass = task.status === "completed" ? "completed" : "pending";
+        const statusText = task.status === "completed" ? "Completed" : "Pending";
 
-        let li = document.createElement("li");
+        const li = document.createElement("li");
+        li.setAttribute('data-task-id', task.id);
         li.innerHTML = `
-        <div class="text ${task.status === "completed" ? "done" : ""}">${task.task}</div>
-        <div class="list_btn">
-            <a href="#" class="cta_btn status-btn ${statusClass}" data-index="${index}">
-                <span class="taskStatus">${statusText}</span>
-            </a>
-            <a href="#" class="cta_btn edit-btn" data-index="${index}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 20h9"/>
-                    <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
-                </svg>
-            </a>
-            <a href="#" class="cta_btn delete-btn" data-index="${index}">
-                <ion-icon name="trash-sharp"></ion-icon>
-            </a>
-        </div>`;
+            <div class="text ${task.status === "completed" ? "done" : ""}">${escapeHtml(task.task)}</div>
+            <div class="list_btn">
+                <a href="#" class="cta_btn status-btn ${statusClass}" data-task-id="${task.id}">
+                    <span class="taskStatus">${statusText}</span>
+                </a>
+                <a href="#" class="cta_btn edit-btn" data-task-id="${task.id}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                    </svg>
+                </a>
+                <a href="#" class="cta_btn delete-btn" data-task-id="${task.id}">
+                    <ion-icon name="trash-sharp"></ion-icon>
+                </a>
+            </div>`;
 
         itemLists.appendChild(li);
     });
 
-    if (itemLists.querySelector('li')) {
-        displayItems.style.display = "block";
-    } else {
-        displayItems.style.display = "none";
-    }
+    // Attach event listeners
+    attachTaskEventListeners();
 
+    // Show display items
+    displayItems.style.display = "block";
+}
+
+// ============================================================
+// ATTACH EVENT LISTENERS
+// ============================================================
+
+function attachTaskEventListeners() {
+    // Status toggle
     document.querySelectorAll('.status-btn').forEach(btn => {
-        btn.addEventListener('click', taskStatus);
+        btn.addEventListener('click', handleStatusChange);
     });
 
+    // Delete
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', deleteTask);
+        btn.addEventListener('click', handleDelete);
     });
 
+    // Edit
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', editTask);
+        btn.addEventListener('click', handleEdit);
     });
-
 }
 
-function taskStatus(e) {
+// ============================================================
+// HANDLE STATUS CHANGE
+// ============================================================
+
+async function handleStatusChange(e) {
     e.preventDefault();
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`;
-    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
+    
+    if (isLoading) return;
 
-    let index = e.target.closest('.status-btn').getAttribute('data-index');
-    let statusBtn = e.target.closest('.status-btn');
-    let taskStatusElement = statusBtn.querySelector('.taskStatus');
+    const taskId = e.currentTarget.getAttribute('data-task-id');
+    const taskElement = document.querySelector(`li[data-task-id="${taskId}"]`);
+    const statusBtn = e.currentTarget;
+    const taskStatusElement = statusBtn.querySelector('.taskStatus');
 
-    if (tasks[index].status === "pending") {
-        tasks[index].status = "completed";
+    // Get current status
+    const isCompleted = taskStatusElement.textContent === "Completed";
+    const newStatus = isCompleted ? "pending" : "completed";
 
-    } else {
-        tasks[index].status = "pending";
+    try {
+        isLoading = true;
+        statusBtn.disabled = true;
 
-    }
+        const result = await updateTask(taskId, { status: newStatus });
 
-    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
-    myLists();
-}
+        if (result.success) {
+            // Update will come from real-time subscription
+        } else {
+            alert(`Error updating task: ${result.error}`);
+        }
 
-function deleteTask(e) {
-    e.preventDefault;
-
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`;
-    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
-
-    let index = e.target.closest('.delete-btn').getAttribute('data-index');
-    tasks.splice(index, 1);
-    localStorage.setItem(userToDoKey, JSON.stringify(tasks));
-    myLists();
-}
-
-function editTask(e) {
-    e.preventDefault();
-
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let userToDoKey = `toDoLists_${currentUser.username}`;
-    let tasks = JSON.parse(localStorage.getItem(userToDoKey) || []);
-
-    let index = e.target.closest('.edit-btn').getAttribute('data-index');
-    let newValue = prompt("Edit your Task", tasks[index].task);
-
-    if (newValue !== null && newValue.trim() !== "") {
-        tasks[index].task = newValue.trim();
-        localStorage.setItem(userToDoKey, JSON.stringify(tasks));
-        myLists();
+    } catch (error) {
+        console.error('Status change error:', error);
+        alert('Error updating task status.');
+    } finally {
+        isLoading = false;
+        statusBtn.disabled = false;
     }
 }
 
+// ============================================================
+// HANDLE DELETE
+// ============================================================
 
-logOutBtn.addEventListener('click', (e) => {
+async function handleDelete(e) {
     e.preventDefault();
-    localStorage.removeItem("currentUser");
-    window.location.href = "./login-signup.html";
-})
+    
+    if (isLoading) return;
 
+    const taskId = e.currentTarget.getAttribute('data-task-id');
 
+    // Confirm deletion
+    if (!confirm('Are you sure you want to delete this task?')) {
+        return;
+    }
 
+    try {
+        isLoading = true;
 
-// Create cursor element
+        const result = await deleteTask(taskId);
+
+        if (result.success) {
+            // Update will come from real-time subscription
+        } else {
+            alert(`Error deleting task: ${result.error}`);
+        }
+
+    } catch (error) {
+        console.error('Delete error:', error);
+        alert('Error deleting task.');
+    } finally {
+        isLoading = false;
+    }
+}
+
+// ============================================================
+// HANDLE EDIT
+// ============================================================
+
+async function handleEdit(e) {
+    e.preventDefault();
+    
+    if (isLoading) return;
+
+    const taskId = e.currentTarget.getAttribute('data-task-id');
+    const taskElement = document.querySelector(`li[data-task-id="${taskId}"]`);
+    const currentText = taskElement.querySelector('.text').textContent;
+
+    const newValue = prompt("Edit your task", currentText);
+
+    if (newValue === null || newValue.trim() === "") {
+        return;
+    }
+
+    try {
+        isLoading = true;
+
+        const result = await updateTask(taskId, { task: newValue.trim() });
+
+        if (result.success) {
+            // Update will come from real-time subscription
+        } else {
+            alert(`Error updating task: ${result.error}`);
+        }
+
+    } catch (error) {
+        console.error('Edit error:', error);
+        alert('Error editing task.');
+    } finally {
+        isLoading = false;
+    }
+}
+
+// ============================================================
+// REAL-TIME SUBSCRIPTION
+// ============================================================
+
+function subscribeToTaskUpdates() {
+    if (!currentUser) return;
+
+    subscription = subscribeToTasks(currentUser.id, async (payload) => {
+        console.log('Real-time update received:', payload.eventType);
+
+        // Reload tasks on any change (INSERT, UPDATE, DELETE)
+        await loadTasks();
+    });
+}
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+logOutBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    try {
+        const result = await logOut();
+
+        if (result.success) {
+            // Clear local storage
+            localStorage.removeItem("currentUser");
+            sessionStorage.removeItem("currentUser");
+
+            // Unsubscribe from real-time updates
+            if (subscription) {
+                subscription.unsubscribe?.();
+            }
+
+            // Redirect to login
+            window.location.href = "./login-signup.html";
+        } else {
+            alert(`Logout failed: ${result.error}`);
+        }
+
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Force logout anyway
+        localStorage.removeItem("currentUser");
+        window.location.href = "./login-signup.html";
+    }
+});
+
+// ============================================================
+// UTILITY: ESCAPE HTML
+// ============================================================
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// ============================================================
+// CLEANUP ON PAGE UNLOAD
+// ============================================================
+
+window.addEventListener('beforeunload', () => {
+    if (subscription) {
+        subscription.unsubscribe?.();
+    }
+});
+
+// ============================================================
+// CUSTOM CURSOR
+// ============================================================
+
 const cursor = document.createElement("div");
 cursor.classList.add("custom-cursor");
 document.body.appendChild(cursor);
 
 let mouseX = 0, mouseY = 0;
 let cursorX = 0, cursorY = 0;
-const speed = 0.1; // Adjust this value for slower or faster movement
+const speed = 0.1;
 
-// Update target mouse position
 document.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 });
 
-// Animate cursor movement
 function animateCursor() {
     cursorX += (mouseX - cursorX) * speed;
     cursorY += (mouseY - cursorY) * speed;
@@ -196,5 +435,4 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 
-// Start animation loop
 animateCursor();

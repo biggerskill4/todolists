@@ -26,9 +26,9 @@
                 </div>
             </div>
             <form class="accountForm flex" name="loginForm">
-                <input type="email" placeholder="Your email" id="loginEmailAddress">
+                <input type="email" placeholder="Your email" id="loginEmailAddress" required>
                 <div class="password">
-                    <input type="password" placeholder="Your password" id="loginPswd">
+                    <input type="password" placeholder="Your password" id="loginPswd" required>
                     <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
                 </div>
                 <button type="submit" class="cta_btn">Login</button>
@@ -36,14 +36,14 @@
             </form>
 
             <form class="accountForm flex" name="signUpForm">
-                <input type="text" placeholder="Full name" id="username">
-                <input type="email" placeholder="Type email" id="signUpEmailAddress">
+                <input type="text" placeholder="Full name" id="username" required>
+                <input type="email" placeholder="Type email" id="signUpEmailAddress" required>
                 <div class="password">
-                    <input type="password" placeholder="Type password" id="signUpPswd">
+                    <input type="password" placeholder="Type password" id="signUpPswd" required>
                     <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
                 </div>
                 <div class="password">
-                    <input type="password" placeholder="Confirm password" id="signUpConfirmPswd">
+                    <input type="password" placeholder="Confirm password" id="signUpConfirmPswd" required>
                     <a href="#"><ion-icon name="eye-off-outline"></ion-icon></a>
                 </div>
                 <button type="submit" class="cta_btn">Signup</button>
@@ -56,7 +56,8 @@
 
 
 
-    <script src="./assets/js/login_form.js"></script>
+    <!-- Import Supabase and login script as ES module -->
+    <script type="module" src="./assets/js/login_form.js"></script>
 </body>
 
 </html>
