@@ -246,8 +246,8 @@ Log Out
 
 ### Need Help?
 - 📧 Email: support@yoursite.com
-- 💬 Discord: [Join our community](https://discord.gg/yourlink)
-- 🐛 GitHub Issues: [Report a bug](https://github.com/YOUR_USERNAME/todo-list/issues)
+- 💬 Discord: [Join our community]()
+- 🐛 GitHub Issues: [Report a bug](https://github.com/biggerskill4/todo-list/issues)
 - 📖 Documentation: Check the wiki
 
 ### FAQ
@@ -322,7 +322,7 @@ See the [LICENSE](LICENSE) file for details.
 
 **Subhan Ahmed**
 - GitHub: [@biggerskill4](https://github.com/biggerskill4)
-- Portfolio: [yourportfolio.com](https://yourportfolio.com)
+- Portfolio: [subhanstack.vercel.app](https://subhanstack.vercel.app)
 - Email: your-email@example.com
 
 ---
