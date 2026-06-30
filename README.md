@@ -25,38 +25,6 @@ A beautiful, modern task management application to organize your daily tasks wit
 
 Check out the application: [https://todolists-fawn.vercel.app](https://todolists-fawn.vercel.app)
 
----
-
-## 🚀 Quick Start
-
-### Option 1: Use Online
-Just visit the live link and start creating tasks!
-
-### Option 2: Run Locally
-
-1. **Clone or Download**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/todo-list.git
-   cd todo-list
-   ```
-
-2. **Run a Local Server**
-   ```bash
-   # Using Python 3
-   python -m http.server 8000
-   
-   # Or using Node.js
-   npx http-server
-   
-   # Or open in VS Code and use Live Server extension
-   ```
-
-3. **Open in Browser**
-   ```
-   http://localhost:8000
-   ```
-
----
 
 ## 📖 How to Use
 
