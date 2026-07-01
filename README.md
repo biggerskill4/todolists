@@ -43,25 +43,6 @@ Check out the application: [https://todolists-fawn.vercel.app](https://todolists
 
 ---
 
-## 📁 Project Structure
-
-```
-├── index.html              # Main application
-├── login-signup.html       # Authentication page
-├── reset-password.html     # Password recovery
-├── assets/
-│   ├── css/
-│   │   └── style.css       # Styling & design
-│   ├── js/
-│   │   ├── script.js       # Main app logic
-│   │   └── login_form.js   # Authentication
-└── Images/
-    ├── favicon.ico
-    └── pencil.svg
-```
-
----
-
 ## 🎨 Design Highlights
 
 - **Modern UI** - Clean, minimalist design
